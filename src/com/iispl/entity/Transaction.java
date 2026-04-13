@@ -10,14 +10,13 @@ public final class Transaction {
 	private final BigInteger amount;
 	private final String channel;
 	private String status;
-	public Transaction(String transactionId, String fromAccount, String toAccount, BigInteger amount, String channel,
-			String status) {
+	public Transaction(String transactionId, String fromAccount, String toAccount, BigInteger amount, String channel
+			) {
 		this.transactionId = transactionId;
 		this.fromAccount = fromAccount;
 		this.toAccount = toAccount;
 		this.amount = amount;
 		this.channel = channel;
-		this.status = status;
 	}
 	public String getTransactionId() {
 		return transactionId;
@@ -36,6 +35,10 @@ public final class Transaction {
 	}
 	public String getStatus() {
 		return status;
+	}
+
+	public void setStatus(String status){
+		this.status=status;
 	}
 	
 	 @Override
