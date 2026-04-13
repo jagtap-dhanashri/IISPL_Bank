@@ -38,7 +38,17 @@ public final class Transaction {
 		return status;
 	}
 	
-	
+	 @Override
+    public String toString() {
+        return "Transaction{" +
+                "transactionId='" + transactionId + '\'' +
+                ", fromAccount='" + fromAccount + '\'' +
+                ", toAccount='" + toAccount + '\'' +
+                ", amount=" + amount +
+                ", channel='" + channel + '\'' +
+                ", status='" + status + '\'' +
+                '}';
+    }
 	
 	
 
