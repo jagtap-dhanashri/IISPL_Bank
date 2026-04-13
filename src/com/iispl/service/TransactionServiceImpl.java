@@ -12,29 +12,37 @@ public class TransactionServiceImpl implements TransactionService {
     private TransactionRepo transactionRepo;
     private AccountService accountService;
 
-    public TransactionServiceImpl(TransactionRepo transactionRepo,AccountService accountService) {
+    public TransactionServiceImpl(TransactionRepo transactionRepo, AccountService accountService) {
         this.transactionRepo = transactionRepo;
         this.accountService = accountService;
     }
 
     @Override
     public void addTransaction(Transaction transaction) {
-        if(accountService.validateAccount(transaction.getFromAccount())==false){
-           System.out.println("From Account is not available.");
-           return;
+        if (accountService.validateAccount(transaction.getFromAccount()) == false) {
+            System.out.println("From Account is not available.");
+            transaction.setStatus("FAILED");
+            transactionRepo.addTransaction(transaction);
+            return;
         }
-        if(accountService.validateAccount(transaction.getToAccount())==false){
+        if (accountService.validateAccount(transaction.getToAccount()) == false) {
             System.out.println("To Account is not available.");
+            transaction.setStatus("FAILED");
+            transactionRepo.addTransaction(transaction);
             return;
         }
 
         if (transaction.getFromAccount().equals(transaction.getToAccount())) {
             System.out.println("From and To account cannot be same.");
+            transaction.setStatus("FAILED");
+            transactionRepo.addTransaction(transaction);
             return;
         }
 
         if (transaction.getAmount().compareTo(BigInteger.ZERO) <= 0) {
             System.out.println("Invalid transaction amount.");
+            transaction.setStatus("FAILED");
+            transactionRepo.addTransaction(transaction);
             return;
         }
 
@@ -43,6 +51,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         if (fromAccount.getBalance().compareTo(transaction.getAmount()) < 0) {
             System.out.println("Insufficient balance in from account.");
+            transaction.setStatus("FAILED");
+            transactionRepo.addTransaction(transaction);
             return;
         }
 
@@ -53,7 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
         accountService.addTransaction(transaction.getToAccount(), transaction);
 
         transactionRepo.addTransaction(transaction);
-        
+
         System.out.println("Transaction added successfully.");
     }
 

@@ -126,11 +126,8 @@ public class BankApplication {
                                 System.out.print("Channel (UPI/NEFT/ATM): ");
                                 String channel = scanner.next();
 
-                                System.out.print("Status (SUCCESS/FAILED): ");
-                                String txnStatus = scanner.next();
-
                                 transactionService.addTransaction(
-                                    new Transaction(txnId, from, to, amount, channel, txnStatus)
+                                    new Transaction(txnId, from, to, amount, channel)
                                 );
                                 break;
 
