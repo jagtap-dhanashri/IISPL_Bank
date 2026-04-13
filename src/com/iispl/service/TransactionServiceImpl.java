@@ -7,12 +7,12 @@ import com.iispl.entity.Account;
 import com.iispl.entity.Transaction;
 import com.iispl.repository.TransactionRepo;
 
-public class TranasctionServiceImpl implements TransactionService {
+public class TransactionServiceImpl implements TransactionService {
 
     private TransactionRepo transactionRepo;
     private AccountService accountService;
 
-    public TranasctionServiceImpl(TransactionRepo transactionRepo,AccountService accountService) {
+    public TransactionServiceImpl(TransactionRepo transactionRepo,AccountService accountService) {
         this.transactionRepo = transactionRepo;
         this.accountService = accountService;
     }

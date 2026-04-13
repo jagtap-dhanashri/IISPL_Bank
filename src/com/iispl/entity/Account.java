@@ -55,6 +55,15 @@ public class Account {
 		this.transaction.add(transaction);
 	}
 
-	
+	@Override
+	public String toString() {
+	    return "Account{" +
+	            "accountNumber='" + accountNumber + '\'' +
+	            ", accountHolderName='" + accountHolderName + '\'' +
+	            ", accountType='" + accountType + '\'' +
+	            ", balance=" + balance +
+	            ", status='" + status + '\'' +
+	            '}';
+	}
 	
 }
