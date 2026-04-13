@@ -1,6 +1,8 @@
 package com.iispl.entity;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Account {
 
@@ -9,6 +11,7 @@ public class Account {
 	private final String accountType;
 	private  BigInteger balance;
 	private  String status;
+	private List<Transaction> transaction;
 
 	public Account(String accountNumber, String accountHolderName, String accountType, BigInteger balance,
 			String status) {
@@ -17,6 +20,7 @@ public class Account {
 		this.accountType = accountType;
 		this.balance = balance;
 		this.status = status;
+		this.transaction=new ArrayList<Transaction>();
 	}
 
 	public String getAccountNumber() {
@@ -39,4 +43,14 @@ public class Account {
 		return status;
 	}
 
+	public List<Transaction> getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(List<Transaction> transaction) {
+		this.transaction = transaction;
+	}
+
+	
+	
 }
