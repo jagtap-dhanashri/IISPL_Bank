@@ -9,7 +9,7 @@ public final class Transaction {
 	private final String toAccount;
 	private final BigInteger amount;
 	private final String channel;
-	private final String status;
+	private String status;
 	public Transaction(String transactionId, String fromAccount, String toAccount, BigInteger amount, String channel,
 			String status) {
 		this.transactionId = transactionId;
