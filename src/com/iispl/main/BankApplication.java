@@ -2,6 +2,7 @@ package com.iispl.main;
 
 import com.iispl.entity.Account;
 import com.iispl.entity.Transaction;
+import com.iispl.exceptions.BankException;
 import com.iispl.repository.AccountRepo;
 import com.iispl.repository.AccountRepoImpl;
 import com.iispl.repository.TransactionRepo;
@@ -11,7 +12,8 @@ import com.iispl.service.AccountService;
 import com.iispl.service.TransactionService;
 import com.iispl.service.TransactionServiceImpl;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
+
 import java.util.Scanner;
 
 public class BankApplication {
@@ -63,13 +65,12 @@ public class BankApplication {
                                 String type = chooseAccountType(scanner);
 
                                 System.out.print("Balance : ");
-                                BigInteger balance = readBigInteger(scanner);
+                                BigDecimal balance = readBigDecimal(scanner);
 
                                 String status = chooseAccountStatus(scanner);
 
                                 accountService.addAccount(
-                                    new Account(accNo, name, type, balance, status)
-                                );
+                                        new Account(accNo, name, type, balance, status));
                                 break;
 
                             case 2:
@@ -120,13 +121,17 @@ public class BankApplication {
                                 String to = readLine(scanner);
 
                                 System.out.print("Amount : ");
-                                BigInteger amount = readBigInteger(scanner);
+                                BigDecimal amount = readBigDecimal(scanner);
 
                                 String channel = chooseChannel(scanner);
 
-                                transactionService.addTransaction(
-                                    new Transaction(txnId, from, to, amount, channel)
-                                );
+                                try {
+                                    transactionService.addTransaction(
+                                            new Transaction(txnId, from, to, amount, channel));
+                                } catch (BankException e) {
+                                    System.out.println("Transaction failed: " + e.getMessage());
+                                }
+
                                 break;
 
                             case 2:
@@ -135,7 +140,7 @@ public class BankApplication {
 
                             case 3:
                                 System.out.print("Enter threshold amount: ");
-                                BigInteger threshold = readBigInteger(scanner);
+                                BigDecimal threshold = readBigDecimal(scanner);
                                 transactionService.displayHighValueTransactions(threshold);
                                 break;
 
@@ -177,12 +182,12 @@ public class BankApplication {
         return value;
     }
 
-    private static BigInteger readBigInteger(Scanner scanner) {
-        while (!scanner.hasNextBigInteger()) {
+    private static BigDecimal readBigDecimal(Scanner scanner) {
+        while (!scanner.hasNextBigDecimal()) {
             System.out.print("Please enter a valid number: ");
             scanner.next();
         }
-        BigInteger value = scanner.nextBigInteger();
+        BigDecimal value = scanner.nextBigDecimal();
         scanner.nextLine();
         return value;
     }
@@ -208,8 +213,10 @@ public class BankApplication {
         System.out.println("2. CURRENT");
         System.out.print("Enter choice: ");
         int choice = readInt(scanner);
-        if (choice == 1) return "SAVINGS";
-        if (choice == 2) return "CURRENT";
+        if (choice == 1)
+            return "SAVINGS";
+        if (choice == 2)
+            return "CURRENT";
         System.out.println("Invalid choice, defaulting to SAVINGS.");
         return "SAVINGS";
     }
@@ -220,8 +227,10 @@ public class BankApplication {
         System.out.println("2. INACTIVE");
         System.out.print("Enter choice: ");
         int choice = readInt(scanner);
-        if (choice == 1) return "ACTIVE";
-        if (choice == 2) return "INACTIVE";
+        if (choice == 1)
+            return "ACTIVE";
+        if (choice == 2)
+            return "INACTIVE";
         System.out.println("Invalid choice, defaulting to ACTIVE.");
         return "ACTIVE";
     }
@@ -233,9 +242,12 @@ public class BankApplication {
         System.out.println("3. ATM");
         System.out.print("Enter choice: ");
         int choice = readInt(scanner);
-        if (choice == 1) return "UPI";
-        if (choice == 2) return "NEFT";
-        if (choice == 3) return "ATM";
+        if (choice == 1)
+            return "UPI";
+        if (choice == 2)
+            return "NEFT";
+        if (choice == 3)
+            return "ATM";
         System.out.println("Invalid choice, defaulting to UPI.");
         return "UPI";
     }

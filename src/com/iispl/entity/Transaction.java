@@ -1,5 +1,6 @@
 package com.iispl.entity;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public final class Transaction {
@@ -7,10 +8,10 @@ public final class Transaction {
 	private final String transactionId;
 	private final String fromAccount;
 	private final String toAccount;
-	private final BigInteger amount;
+	private final BigDecimal amount;
 	private final String channel;
 	private String status;
-	public Transaction(String transactionId, String fromAccount, String toAccount, BigInteger amount, String channel
+	public Transaction(String transactionId, String fromAccount, String toAccount, BigDecimal amount, String channel
 			) {
 		this.transactionId = transactionId;
 		this.fromAccount = fromAccount;
@@ -27,7 +28,7 @@ public final class Transaction {
 	public String getToAccount() {
 		return toAccount;
 	}
-	public BigInteger getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 	public String getChannel() {
