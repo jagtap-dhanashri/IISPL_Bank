@@ -19,30 +19,31 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void addTransaction(Transaction transaction) {
+        if (transactionRepo.existsTransactionId(transaction.getTransactionId())) {
+            System.out.println("Duplicate transaction ID.");
+            transaction.setStatus("FAILED");
+            return;
+        }
         if (accountService.validateAccount(transaction.getFromAccount()) == false) {
             System.out.println("From Account is not available.");
-            transaction.setStatus("FAILED");
-            transactionRepo.addTransaction(transaction);
+            logFailed(transaction, false, false);
             return;
         }
         if (accountService.validateAccount(transaction.getToAccount()) == false) {
             System.out.println("To Account is not available.");
-            transaction.setStatus("FAILED");
-            transactionRepo.addTransaction(transaction);
+            logFailed(transaction, true, false);
             return;
         }
 
         if (transaction.getFromAccount().equals(transaction.getToAccount())) {
             System.out.println("From and To account cannot be same.");
-            transaction.setStatus("FAILED");
-            transactionRepo.addTransaction(transaction);
+            logFailed(transaction, true, true);
             return;
         }
 
         if (transaction.getAmount().compareTo(BigInteger.ZERO) <= 0) {
             System.out.println("Invalid transaction amount.");
-            transaction.setStatus("FAILED");
-            transactionRepo.addTransaction(transaction);
+            logFailed(transaction, true, true);
             return;
         }
 
@@ -51,17 +52,27 @@ public class TransactionServiceImpl implements TransactionService {
 
         if (fromAccount.getBalance().compareTo(transaction.getAmount()) < 0) {
             System.out.println("Insufficient balance in from account.");
-            transaction.setStatus("FAILED");
-            transactionRepo.addTransaction(transaction);
+            logFailed(transaction, true, true);
+            return;
+        }
+        
+        if(fromAccount.getStatus().equalsIgnoreCase("INACTIVE")){
+            System.out.println("From Account is inactive.");
+            logFailed(transaction, true, true);
             return;
         }
 
+        if(toAccount.getStatus().equalsIgnoreCase("INACTIVE")){
+            System.out.println("To Account is inactive.");
+            logFailed(transaction, true, true);
+            return;
+        }
         fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getAmount()));
         toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount()));
 
         accountService.addTransaction(transaction.getFromAccount(), transaction);
         accountService.addTransaction(transaction.getToAccount(), transaction);
-
+        transaction.setStatus("SUCCESS");
         transactionRepo.addTransaction(transaction);
 
         System.out.println("Transaction added successfully.");
@@ -109,5 +120,16 @@ public class TransactionServiceImpl implements TransactionService {
         if (!found) {
             System.out.println("No failed transactions found.");
         }
+    }
+
+    private void logFailed(Transaction transaction, boolean addToFrom, boolean addToTo) {
+        transaction.setStatus("FAILED");
+        if (addToFrom) {
+            accountService.addTransaction(transaction.getFromAccount(), transaction);
+        }
+        if (addToTo) {
+            accountService.addTransaction(transaction.getToAccount(), transaction);
+        }
+        transactionRepo.addTransaction(transaction);
     }
 }

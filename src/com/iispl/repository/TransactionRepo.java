@@ -7,4 +7,5 @@ import com.iispl.entity.Transaction;
 public interface TransactionRepo {
     public void addTransaction(Transaction transaction);
     public List<Transaction> findAllTransactions();
+    public boolean existsTransactionId(String transactionId);
 }

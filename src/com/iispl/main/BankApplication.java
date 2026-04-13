@@ -16,6 +16,9 @@ import java.util.Scanner;
 
 public class BankApplication {
 
+    private static int nextAccountSeq = 1001;
+    private static int nextTxnSeq = 1;
+
     public static void main(String[] args) {
 
         AccountRepo accountRepo = new AccountRepoImpl();
@@ -32,7 +35,7 @@ public class BankApplication {
             System.out.println("2. Transactions");
             System.out.println("0. Exit");
             System.out.print("Enter choice: ");
-            mainChoice = scanner.nextInt();
+            mainChoice = readInt(scanner);
 
             switch (mainChoice) {
 
@@ -46,26 +49,23 @@ public class BankApplication {
                         System.out.println("4. Display Savings Accounts");
                         System.out.println("0. Back");
                         System.out.print("Enter choice: ");
-                        accChoice = scanner.nextInt();
+                        accChoice = readInt(scanner);
 
                         switch (accChoice) {
 
                             case 1:
-                                scanner.nextLine(); 
-                                System.out.print("Account Number : ");
-                                String accNo = scanner.nextLine();
+                                String accNo = generateAccountNumber(accountRepo);
+                                System.out.println("Account Number : " + accNo);
 
                                 System.out.print("Holder Name : ");
-                                String name = scanner.nextLine();
+                                String name = readLine(scanner);
 
-                                System.out.print("Account Type (Savings/Current): ");
-                                String type = scanner.nextLine();
+                                String type = chooseAccountType(scanner);
 
                                 System.out.print("Balance : ");
-                                BigInteger balance = scanner.nextBigInteger();
+                                BigInteger balance = readBigInteger(scanner);
 
-                                System.out.print("Status (ACTIVE/INACTIVE): ");
-                                String status = scanner.next();
+                                String status = chooseAccountStatus(scanner);
 
                                 accountService.addAccount(
                                     new Account(accNo, name, type, balance, status)
@@ -105,26 +105,24 @@ public class BankApplication {
                         System.out.println("4. Display Failed Transactions");
                         System.out.println("0. Back");
                         System.out.print("Enter choice: ");
-                        txnChoice = scanner.nextInt();
+                        txnChoice = readInt(scanner);
 
                         switch (txnChoice) {
 
                             case 1:
-                                scanner.nextLine(); 
-                                System.out.print("Transaction ID : ");
-                                String txnId = scanner.nextLine();
+                                String txnId = generateTransactionId(transactionRepo);
+                                System.out.println("Transaction ID : " + txnId);
 
                                 System.out.print("From Account : ");
-                                String from = scanner.nextLine();
+                                String from = readLine(scanner);
 
                                 System.out.print("To Account : ");
-                                String to = scanner.nextLine();
+                                String to = readLine(scanner);
 
                                 System.out.print("Amount : ");
-                                BigInteger amount = scanner.nextBigInteger();
+                                BigInteger amount = readBigInteger(scanner);
 
-                                System.out.print("Channel (UPI/NEFT/ATM): ");
-                                String channel = scanner.next();
+                                String channel = chooseChannel(scanner);
 
                                 transactionService.addTransaction(
                                     new Transaction(txnId, from, to, amount, channel)
@@ -137,7 +135,7 @@ public class BankApplication {
 
                             case 3:
                                 System.out.print("Enter threshold amount: ");
-                                BigInteger threshold = scanner.nextBigInteger();
+                                BigInteger threshold = readBigInteger(scanner);
                                 transactionService.displayHighValueTransactions(threshold);
                                 break;
 
@@ -167,5 +165,94 @@ public class BankApplication {
         } while (mainChoice != 0);
 
         scanner.close();
+    }
+
+    private static int readInt(Scanner scanner) {
+        while (!scanner.hasNextInt()) {
+            System.out.print("Please enter a number: ");
+            scanner.next();
+        }
+        int value = scanner.nextInt();
+        scanner.nextLine();
+        return value;
+    }
+
+    private static BigInteger readBigInteger(Scanner scanner) {
+        while (!scanner.hasNextBigInteger()) {
+            System.out.print("Please enter a valid number: ");
+            scanner.next();
+        }
+        BigInteger value = scanner.nextBigInteger();
+        scanner.nextLine();
+        return value;
+    }
+
+    private static String readLine(Scanner scanner) {
+        String value = scanner.nextLine();
+        while (value.trim().isEmpty()) {
+            System.out.print("Value cannot be empty, try again: ");
+            value = scanner.nextLine();
+        }
+        return value;
+    }
+
+    private static String readToken(Scanner scanner) {
+        String value = scanner.next();
+        scanner.nextLine();
+        return value;
+    }
+
+    private static String chooseAccountType(Scanner scanner) {
+        System.out.println("Account Type:");
+        System.out.println("1. SAVINGS");
+        System.out.println("2. CURRENT");
+        System.out.print("Enter choice: ");
+        int choice = readInt(scanner);
+        if (choice == 1) return "SAVINGS";
+        if (choice == 2) return "CURRENT";
+        System.out.println("Invalid choice, defaulting to SAVINGS.");
+        return "SAVINGS";
+    }
+
+    private static String chooseAccountStatus(Scanner scanner) {
+        System.out.println("Account Status:");
+        System.out.println("1. ACTIVE");
+        System.out.println("2. INACTIVE");
+        System.out.print("Enter choice: ");
+        int choice = readInt(scanner);
+        if (choice == 1) return "ACTIVE";
+        if (choice == 2) return "INACTIVE";
+        System.out.println("Invalid choice, defaulting to ACTIVE.");
+        return "ACTIVE";
+    }
+
+    private static String chooseChannel(Scanner scanner) {
+        System.out.println("Channel:");
+        System.out.println("1. UPI");
+        System.out.println("2. NEFT");
+        System.out.println("3. ATM");
+        System.out.print("Enter choice: ");
+        int choice = readInt(scanner);
+        if (choice == 1) return "UPI";
+        if (choice == 2) return "NEFT";
+        if (choice == 3) return "ATM";
+        System.out.println("Invalid choice, defaulting to UPI.");
+        return "UPI";
+    }
+
+    private static String generateAccountNumber(AccountRepo accountRepo) {
+        String candidate;
+        do {
+            candidate = "ACC" + nextAccountSeq++;
+        } while (accountRepo.existsAccountNumber(candidate));
+        return candidate;
+    }
+
+    private static String generateTransactionId(TransactionRepo transactionRepo) {
+        String candidate;
+        do {
+            candidate = "TXN" + String.format("%05d", nextTxnSeq++);
+        } while (transactionRepo.existsTransactionId(candidate));
+        return candidate;
     }
 }

@@ -9,4 +9,5 @@ public interface AccountRepo {
     List<Account> findAllAccounts();
     
     public Account findAcc(String accountNumber);
+    public boolean existsAccountNumber(String accountNumber);
 }

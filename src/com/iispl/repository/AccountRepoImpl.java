@@ -18,6 +18,7 @@ public class AccountRepoImpl implements AccountRepo{
         return accounts;
     }
     
+    @Override
     public Account findAcc(String accountNumber) {
         for (Account acc : accounts) {
             if (acc.getAccountNumber().equals(accountNumber)) {
@@ -25,5 +26,10 @@ public class AccountRepoImpl implements AccountRepo{
             }
         }
         return null; 
+    }
+    
+    @Override
+    public boolean existsAccountNumber(String accountNumber) {
+        return findAcc(accountNumber) != null;
     }
 }
