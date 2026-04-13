@@ -9,8 +9,8 @@ public class Account {
 	private final String accountNumber;
 	private final String accountHolderName;
 	private final String accountType;
-	private  BigInteger balance;
-	private  String status;
+	private BigInteger balance;
+	private String status;
 	private List<Transaction> transaction;
 
 	public Account(String accountNumber, String accountHolderName, String accountType, BigInteger balance,
@@ -20,7 +20,7 @@ public class Account {
 		this.accountType = accountType;
 		this.balance = balance;
 		this.status = status;
-		this.transaction=new ArrayList<Transaction>();
+		this.transaction = new ArrayList<Transaction>();
 	}
 
 	public String getAccountNumber() {
@@ -51,6 +51,4 @@ public class Account {
 		this.transaction = transaction;
 	}
 
-	
-	
 }
