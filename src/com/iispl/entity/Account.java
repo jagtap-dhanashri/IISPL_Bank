@@ -1,5 +1,6 @@
 package com.iispl.entity;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +10,11 @@ public class Account {
 	private final String accountNumber;
 	private final String accountHolderName;
 	private final String accountType;
-	private  BigInteger balance;
+	private  BigDecimal balance;
 	private  String status;
 	private List<Transaction> transaction;
 
-	public Account(String accountNumber, String accountHolderName, String accountType, BigInteger balance,
+	public Account(String accountNumber, String accountHolderName, String accountType, BigDecimal balance,
 			String status) {
 		this.accountNumber = accountNumber;
 		this.accountHolderName = accountHolderName;
@@ -35,11 +36,11 @@ public class Account {
 		return accountType;
 	}
 
-	public BigInteger getBalance() {
+	public BigDecimal getBalance() {
 		return balance;
 	}
 	
-	public void setBalance(BigInteger balance) {
+	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
 	}
 

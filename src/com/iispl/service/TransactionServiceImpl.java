@@ -1,10 +1,12 @@
 package com.iispl.service;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
+
 import java.util.List;
 
 import com.iispl.entity.Account;
 import com.iispl.entity.Transaction;
+import com.iispl.exceptions.BankException;
 import com.iispl.repository.TransactionRepo;
 
 public class TransactionServiceImpl implements TransactionService {
@@ -20,52 +22,44 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void addTransaction(Transaction transaction) {
         if (transactionRepo.existsTransactionId(transaction.getTransactionId())) {
-            System.out.println("Duplicate transaction ID.");
             transaction.setStatus("FAILED");
-            return;
+            throw new BankException("Duplicate transaction ID.");
         }
         if (accountService.validateAccount(transaction.getFromAccount()) == false) {
-            System.out.println("From Account is not available.");
             logFailed(transaction, false, false);
-            return;
+            throw new BankException("From Account is not available.");
         }
         if (accountService.validateAccount(transaction.getToAccount()) == false) {
-            System.out.println("To Account is not available.");
             logFailed(transaction, true, false);
-            return;
+            throw new BankException("To Account is not available.");
         }
 
         if (transaction.getFromAccount().equals(transaction.getToAccount())) {
-            System.out.println("From and To account cannot be same.");
             logFailed(transaction, true, true);
-            return;
+            throw new BankException("From and To account cannot be same.");
         }
 
-        if (transaction.getAmount().compareTo(BigInteger.ZERO) <= 0) {
-            System.out.println("Invalid transaction amount.");
+        if (transaction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             logFailed(transaction, true, true);
-            return;
+            throw new BankException("Invalid transaction amount.");
         }
 
         Account fromAccount = accountService.getAccountByNumber(transaction.getFromAccount());
         Account toAccount = accountService.getAccountByNumber(transaction.getToAccount());
 
         if (fromAccount.getBalance().compareTo(transaction.getAmount()) < 0) {
-            System.out.println("Insufficient balance in from account.");
             logFailed(transaction, true, true);
-            return;
+            throw new BankException("Insufficient balance in from account.");
         }
         
         if(fromAccount.getStatus().equalsIgnoreCase("INACTIVE")){
-            System.out.println("From Account is inactive.");
             logFailed(transaction, true, true);
-            return;
+            throw new BankException("From Account is inactive.");
         }
 
         if(toAccount.getStatus().equalsIgnoreCase("INACTIVE")){
-            System.out.println("To Account is inactive.");
             logFailed(transaction, true, true);
-            return;
+            throw new BankException("To Account is inactive.");
         }
         fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getAmount()));
         toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount()));
@@ -91,7 +85,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void displayHighValueTransactions(BigInteger threshold) {
+    public void displayHighValueTransactions(BigDecimal threshold) {
         List<Transaction> transactions = transactionRepo.findAllTransactions();
         boolean found = false;
 
