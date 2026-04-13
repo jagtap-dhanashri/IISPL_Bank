@@ -1,6 +1,7 @@
 package com.iispl.service;
 
 import com.iispl.entity.Account;
+import com.iispl.entity.Transaction;
 import com.iispl.repository.AccountRepo;
 import java.util.List;
 
@@ -57,5 +58,18 @@ public class AccountSericeImpl implements AccountService {
     		return true;
     	}
     	return false;
+    }
+    
+    @Override
+    public Account getAccountByNumber(String accountNumber) {
+        return accountRepo.findAcc(accountNumber);
+    }
+
+    @Override
+    public void addTransaction(String accountNumber,Transaction transaction){
+        Account account=accountRepo.findAcc(accountNumber);
+        if (account != null) {
+            account.addTransaction(transaction);
+        }
     }
 }

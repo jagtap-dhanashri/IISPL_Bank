@@ -38,6 +38,10 @@ public class Account {
 	public BigInteger getBalance() {
 		return balance;
 	}
+	
+	public void setBalance(BigInteger balance) {
+		this.balance = balance;
+	}
 
 	public String getStatus() {
 		return status;
@@ -47,8 +51,8 @@ public class Account {
 		return transaction;
 	}
 
-	public void setTransaction(List<Transaction> transaction) {
-		this.transaction = transaction;
+	public void addTransaction(Transaction transaction) {
+		this.transaction.add(transaction);
 	}
 
 	
